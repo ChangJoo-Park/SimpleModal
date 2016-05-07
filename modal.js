@@ -3,20 +3,7 @@
  * My Modal Library
  * @return {Object} - sets of functions
  */
-
-// Hide all modal container
-(function(){
-  $('*[data-role="modal:open"]').click(function(event) {
-      var target = $(this).data('target');
-      $(target).show();
-  });
-
-  $('*[data-role="modal:container"]').each(function(index, el) {
-    $(el).hide();
-  });
-}());
-
-var MyModal = function() {
+var MyModal = function(selector) {
   var properties = {
     userBeforeOpen: undefined,
     userAfterOpen: undefined,
@@ -35,6 +22,7 @@ var MyModal = function() {
   var $body = $('body');
   var overlay = '<div class="modal-overlay"></div>';
   var $overlay = {};
+  var $modal = $($(selector).data('target'));
   // Save before body properties
   var restorableProperties = {
     overflow: $body.css('overflow')
@@ -93,24 +81,12 @@ var MyModal = function() {
   /**
    *
    */
-  function beforeOpen() {
+  function startOpen() {
     console.log('Super -- Before Open !!');
     // save body properties
     restorableProperties = {
       overflow: $body.css('overflow')
     };
-
-    // handle overlay
-    if (properties.useBackdropOvelay === true) {
-      console.log('set overlay');
-      $body.append(overlay);
-      $overlay = $('.modal-overlay');
-      $overlay.css('background-color', properties.overlayOptions.color);
-      $overlay.animate({'opacity': properties.overlayOptions.opacity},
-                        properties.overlayOptions.duration);
-    } else {
-      console.log('Not set overlay');
-    }
 
     // handle background scroll
     if (properties.scrollableBackgroud) {
@@ -125,12 +101,27 @@ var MyModal = function() {
       console.log('+User --- Before Open !!');
       properties.userBeforeOpen();
     }
+
+    // handle overlay
+    if (properties.useBackdropOvelay === true) {
+      console.log('set overlay');
+      $body.append(overlay);
+      $overlay = $('.modal-overlay');
+      $overlay.css('background-color', properties.overlayOptions.color);
+      $overlay.animate({'opacity': properties.overlayOptions.opacity},
+                        properties.overlayOptions.duration, function(){
+                          doOpen();
+      });
+    } else {
+      console.log('Not set overlay');
+      doOpen();
+    }
   }
 
   /**
    *
    */
-  function afterOpen() {
+  function endOpen() {
     console.log('Super -- After Open !!');
     if (properties.useBackdropOvelay === true) {
        $($overlay).click(clickOverlay);
@@ -146,20 +137,21 @@ var MyModal = function() {
   /**
    *
    */
-  function beforeClose() {
+  function startClose() {
     console.log('Super -- Before Close !!');
     if (properties.hasOwnProperty('userBeforeClose') &&
         properties.userBeforeClose !== undefined) {
       console.log('+User --- Before Close !!');
       properties.userBeforeClose();
     }
+    doClose();
     return;
   }
 
   /**
    *
    */
-  function afterClose() {
+  function endClose() {
     console.log('Super -- After Close !!');
 
     if (properties.useBackdropOvelay === true) {
@@ -183,7 +175,9 @@ var MyModal = function() {
    *
    */
   function doOpen() {
-    console.log('Open !!');
+    $modal.show(function(){
+      endOpen();
+    });
   }
 
   /**
@@ -191,6 +185,10 @@ var MyModal = function() {
    */
   function doClose() {
     console.log('Close !!');
+    console.log($modal);
+    $modal.hide(function(){
+      endClose();
+    });
   }
 
   /*
@@ -210,18 +208,15 @@ var MyModal = function() {
    */
   function open(args) {
     validateProperties(args);
-    beforeOpen();
-    doOpen();
-    afterOpen();
+    startOpen();
+    // afterOpen();
   }
 
   /**
    *
    */
   function close() {
-    beforeClose();
-    doClose();
-    afterClose();
+    startClose();
   }
 
   return {
@@ -229,3 +224,11 @@ var MyModal = function() {
     close: close
   };
 };
+
+// Hide all modal container
+(function(){
+  $('div[data-role="modal:container"]').each(function(index, el) {
+    $(el).hide();
+  });
+}());
+

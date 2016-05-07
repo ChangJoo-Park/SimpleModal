@@ -35,14 +35,13 @@ var MyModal = function(selector) {
       property = properties;
     }
     Object.keys(args).forEach(function(key, idx){
+      if(!property.hasOwnProperty(key)) {
+        return;
+      }
       if(typeof args[key] ===  'object') {
-        if(property.hasOwnProperty(key)) {
-          setProperties(args[key], property[key]);
-        }
+        setProperties(args[key], property[key]);
       } else {
-        if(property.hasOwnProperty(key)) {
-          property[key] = args[key];
-        }
+        property[key] = args[key];
       }
     });
   }

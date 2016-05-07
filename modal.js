@@ -3,6 +3,19 @@
  * My Modal Library
  * @return {Object} - sets of functions
  */
+
+// Hide all modal container
+(function(){
+  $('*[data-role="modal:open"]').click(function(event) {
+      var target = $(this).data('target');
+      $(target).show();
+  });
+
+  $('*[data-role="modal:container"]').each(function(index, el) {
+    $(el).hide();
+  });
+}());
+
 var MyModal = function() {
   var properties = {
     userBeforeOpen: undefined,
@@ -13,6 +26,7 @@ var MyModal = function() {
     overlayOptions: {
       opacity: 0.95,
       duration: 300,
+      color: 'black',
       closeWhenClick: true
     },
     scrollableBackgroud: false
@@ -70,6 +84,9 @@ var MyModal = function() {
       if (args.overlayOptions.hasOwnProperty('closeWhenClick')) {
         properties.overlayOptions.closeWhenClick = args.overlayOptions.closeWhenClick;
       }
+      if (args.overlayOptions.hasOwnProperty('color')) {
+        properties.overlayOptions.color = args.overlayOptions.color;
+      }
     }
   }
 
@@ -88,6 +105,7 @@ var MyModal = function() {
       console.log('set overlay');
       $body.append(overlay);
       $overlay = $('.modal-overlay');
+      $overlay.css('background-color', properties.overlayOptions.color);
       $overlay.animate({'opacity': properties.overlayOptions.opacity},
                         properties.overlayOptions.duration);
     } else {

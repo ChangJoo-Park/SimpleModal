@@ -10,6 +10,11 @@ var MyModal = function() {
     userBeforeClose: undefined,
     userAfterClose: undefined,
     useBackdropOvelay: true,
+    overlayOptions: {
+      opacity: 0.95,
+      duration: 300,
+      closeWhenClick: true
+    },
     scrollableBackgroud: false
   };
   // Get Default Properties
@@ -18,18 +23,16 @@ var MyModal = function() {
   var $overlay = {};
   // Save before body properties
   var restorableProperties = {
-    margin: $body.css('margin'),
-    padding: $body.css('padding'),
     overflow: $body.css('overflow')
   };
-  console.log('restorableProperties',restorableProperties);
+  console.log('restorableProperties', restorableProperties);
 
   /**
    * @param  {*}  args - arguments for properties
    * @return {undefined}
    */
   function validateProperties(args) {
-    if (Object.keys(args).length === 0) {
+    if (args === undefined || args == null || Object.keys(args).length === 0) {
       console.log('Has no args');
       return;
     }
@@ -56,7 +59,18 @@ var MyModal = function() {
     if (args.hasOwnProperty('scrollableBackgroud')) {
       properties.scrollableBackgroud = args.scrollableBackgroud;
     }
-    console.log(properties);
+
+    if (args.hasOwnProperty('overlayOptions')) {
+      if (args.overlayOptions.hasOwnProperty('opacity')) {
+        properties.overlayOptions.opacity = args.overlayOptions.opacity;
+      }
+      if (args.overlayOptions.hasOwnProperty('duration')) {
+        properties.overlayOptions.duration = args.overlayOptions.duration;
+      }
+      if (args.overlayOptions.hasOwnProperty('closeWhenClick')) {
+        properties.overlayOptions.closeWhenClick = args.overlayOptions.closeWhenClick;
+      }
+    }
   }
 
   /**
@@ -65,31 +79,26 @@ var MyModal = function() {
   function beforeOpen() {
     console.log('Super -- Before Open !!');
     // save body properties
-    console.log('save body properties');
     restorableProperties = {
-      margin: $body.css('margin'),
-      padding: $body.css('padding'),
       overflow: $body.css('overflow')
     };
 
     // handle overlay
     if (properties.useBackdropOvelay === true) {
       console.log('set overlay');
-      var styles = {margin: 0, padding: 0, overflow: 'hidden'};
-      $body.css(styles);
       $body.append(overlay);
       $overlay = $('.modal-overlay');
+      $overlay.animate({'opacity': properties.overlayOptions.opacity},
+                        properties.overlayOptions.duration);
     } else {
       console.log('Not set overlay');
     }
 
     // handle background scroll
-    if (properties.hasOwnProperty('scrollableBackgroud') &&
-        properties.scrollableBackgroud !== undefined &&
-        properties.scrollableBackgroud === true) {
-
+    if (properties.scrollableBackgroud) {
     } else {
-
+      var styles = {overflow: 'hidden'};
+      $body.css(styles);
     }
 
     // User
@@ -106,7 +115,7 @@ var MyModal = function() {
   function afterOpen() {
     console.log('Super -- After Open !!');
     if (properties.useBackdropOvelay === true) {
-      $($overlay).click(clickOverlay);
+       $($overlay).click(clickOverlay);
     }
 
     if (properties.hasOwnProperty('userAfterOpen') &&
@@ -134,9 +143,15 @@ var MyModal = function() {
    */
   function afterClose() {
     console.log('Super -- After Close !!');
-    $body.css(restorableProperties);
+
     if (properties.useBackdropOvelay === true) {
-      $overlay.remove();
+      console.log('opacity');
+      $overlay.animate({opacity: 0}, properties.overlayOptions.duration, function() {
+        this.remove();
+        $body.css(restorableProperties);
+      });
+    } else {
+      $body.css(restorableProperties);
     }
 
     if (properties.hasOwnProperty('userAfterClose') &&
@@ -163,9 +178,13 @@ var MyModal = function() {
   /*
     Overlay functions
    */
-   function clickOverlay(event) {
+  function clickOverlay(event) {
+    if (properties.overlayOptions.closeWhenClick) {
       close();
-   }
+    } else {
+
+    }
+  }
 
   // Public Methods
   /**

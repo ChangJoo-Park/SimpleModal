@@ -29,6 +29,23 @@ var MyModal = function(selector) {
   };
   console.log('restorableProperties', restorableProperties);
 
+  function setProperties(args, props) {
+    var property = props;
+    if (property === undefined || property === null) {
+      property = properties;
+    }
+    Object.keys(args).forEach(function(key, idx){
+      if(typeof args[key] ===  'object') {
+        if(property.hasOwnProperty(key)) {
+          setProperties(args[key], property[key]);
+        }
+      } else {
+        if(property.hasOwnProperty(key)) {
+          property[key] = args[key];
+        }
+      }
+    });
+  }
   /**
    * @param  {*}  args - arguments for properties
    * @return {undefined}
@@ -38,44 +55,7 @@ var MyModal = function(selector) {
       console.log('Has no args');
       return;
     }
-
-    // Callback functions
-    if (args.hasOwnProperty('beforeOpen')) {
-      properties.userBeforeOpen = args.beforeOpen;
-    }
-    if (args.hasOwnProperty('afterOpen')) {
-      properties.userAfterOpen = args.afterOpen;
-    }
-    if (args.hasOwnProperty('beforeClose')) {
-      properties.userBeforeClose = args.beforeClose;
-    }
-    if (args.hasOwnProperty('afterClose')) {
-      properties.userAfterClose = args.afterClose;
-    }
-
-    // Optional Properties
-    if (args.hasOwnProperty('useBackdropOvelay')) {
-      properties.useBackdropOvelay = args.useBackdropOvelay;
-    }
-
-    if (args.hasOwnProperty('scrollableBackgroud')) {
-      properties.scrollableBackgroud = args.scrollableBackgroud;
-    }
-
-    if (args.hasOwnProperty('overlayOptions')) {
-      if (args.overlayOptions.hasOwnProperty('opacity')) {
-        properties.overlayOptions.opacity = args.overlayOptions.opacity;
-      }
-      if (args.overlayOptions.hasOwnProperty('duration')) {
-        properties.overlayOptions.duration = args.overlayOptions.duration;
-      }
-      if (args.overlayOptions.hasOwnProperty('closeWhenClick')) {
-        properties.overlayOptions.closeWhenClick = args.overlayOptions.closeWhenClick;
-      }
-      if (args.overlayOptions.hasOwnProperty('color')) {
-        properties.overlayOptions.color = args.overlayOptions.color;
-      }
-    }
+    setProperties(args);
   }
 
   /**

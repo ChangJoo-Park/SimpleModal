@@ -71,12 +71,12 @@ var MyModal = function() {
       padding: $body.css('padding'),
       overflow: $body.css('overflow')
     };
-    var styles = {margin: 0, padding: 0, overflow: 'hidden'};
-    $body.css(styles);
 
     // handle overlay
     if (properties.useBackdropOvelay === true) {
       console.log('set overlay');
+      var styles = {margin: 0, padding: 0, overflow: 'hidden'};
+      $body.css(styles);
       $body.append(overlay);
       $overlay = $('.modal-overlay');
     } else {

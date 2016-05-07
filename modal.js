@@ -35,12 +35,11 @@ var MyModal = function(selector) {
       property = properties;
     }
     Object.keys(args).forEach(function(key, idx){
-      if(typeof args[key] ===  'object') {
-        if(property.hasOwnProperty(key)) {
+      if(property.hasOwnProperty(key)) {
+        if(typeof args[key] ===  'object') {
           setProperties(args[key], property[key]);
-        }
-      } else {
-        if(property.hasOwnProperty(key)) {
+          }
+        } else {
           property[key] = args[key];
         }
       }

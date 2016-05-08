@@ -107,6 +107,12 @@ var MyModal = function(selector) {
        $($overlay).click(clickOverlay);
     }
 
+    // handle close modal button
+    $('*[data-role="modal:container"] [data-dismiss="modal"]').click(function(event) {
+      event.preventDefault();
+      startClose();
+    });
+
     if (properties.hasOwnProperty('userAfterOpen') &&
         properties.userAfterOpen !== undefined) {
       console.log('+User --- After Open !!');

@@ -83,14 +83,15 @@ var MyModal = function(selector) {
 
     // handle overlay
     if (properties.useBackdropOvelay === true) {
-      console.log('set overlay');
-      $body.append(overlay);
-      $overlay = $('.modal-overlay');
-      $overlay.css('background-color', properties.overlayOptions.color);
-      $overlay.animate({'opacity': properties.overlayOptions.opacity},
-                        properties.overlayOptions.duration, function(){
-                          doOpen();
-      });
+      if($('body').find('.modal-overlay').length === 0) {
+        $body.append(overlay);
+        $overlay = $('.modal-overlay');
+        $overlay.css('background-color', properties.overlayOptions.color);
+        $overlay.animate({'opacity': properties.overlayOptions.opacity},
+                          properties.overlayOptions.duration, function(){
+                            doOpen();
+        });
+      }
     } else {
       console.log('Not set overlay');
       doOpen();

@@ -65,7 +65,7 @@ var SimpleModal = function(selector) {
    * @param {[type]} args  source properties
    * @param {[type]} props target properties
    */
-  setProperties = function(args, props) {
+  var setProperties = function(args, props) {
     var property = props;
     if (property === undefined || property === null) {
       property = properties;
@@ -85,7 +85,7 @@ var SimpleModal = function(selector) {
    * @param  {*}  args - arguments for properties
    * @return {undefined}
    */
-  validateProperties = function(args) {
+  var validateProperties = function(args) {
     if (args === undefined || args === null || Object.keys(args).length === 0) {
       console.log('Has no args');
       return;
@@ -97,7 +97,7 @@ var SimpleModal = function(selector) {
   /**
    * Modal start open
    */
-  startOpen = function() {
+  var startOpen = function() {
     console.log('[#startOpen] : Begin');
     if (isOpening) {
       return;
@@ -146,7 +146,7 @@ var SimpleModal = function(selector) {
   /**
    *
    */
-  endOpen = function() {
+  var endOpen = function() {
     console.log('[#endOpen] : Begin');
     if (properties.useBackdropOvelay === true) {
       console.log('[#endOpen] : Add click event to overlay');
@@ -191,7 +191,7 @@ var SimpleModal = function(selector) {
   /**
    *
    */
-  startClose = function() {
+  var startClose = function() {
     console.log('[#startClose] : Begin');
     if (isClosing) {
       console.log('[#startClose] : Block when click multiple');
@@ -223,7 +223,7 @@ var SimpleModal = function(selector) {
    * Callback when modal ends
    * @return {[type]}
    */
-  endClose = function() {
+  var endClose = function() {
     console.log('[#endClose] : Begin');
 
     if (properties.useBackdropOvelay === true) {
@@ -254,7 +254,7 @@ var SimpleModal = function(selector) {
   /**
    *
    */
-  doOpen = function() {
+  var doOpen = function() {
     console.log('[#doOpen] : Begin');
     $modal.show('400', function() {
       endOpen();
@@ -265,7 +265,7 @@ var SimpleModal = function(selector) {
   /**
    *
    */
-  doClose = function() {
+  var doClose = function() {
     console.log('[#doClose] : Begin');
     $modal.hide('400', function() {
       endClose();
@@ -277,7 +277,7 @@ var SimpleModal = function(selector) {
    * Event when overlay clicked
    * @param  {[type]} event overlay click function
    */
-  clickOverlay = function(event) {
+  var clickOverlay = function(event) {
     event.preventDefault();
     if (properties.overlayOptions.closeWhenClick) {
       startClose();
@@ -288,7 +288,7 @@ var SimpleModal = function(selector) {
   /**
    * @param  {*} args - It is initialize parames, will set properties
    */
-  open = function(args) {
+  var open = function(args) {
     console.log('[#Open] Begin');
     validateProperties(args);
     startOpen();

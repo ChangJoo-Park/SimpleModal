@@ -6,11 +6,13 @@
  * @return {Object} - sets of functions
  */
 var SimpleModal = function(selector) {
-  var properties = {
+  var defaultProperties = {
     userBeforeOpen: undefined,
     userAfterOpen: undefined,
     userBeforeClose: undefined,
     userAfterClose: undefined,
+    userCancel: undefined,
+    userSubmit: undefined,
     useBackdropOvelay: true,
     overlayOptions: {
       opacity: 0.95,
@@ -20,7 +22,9 @@ var SimpleModal = function(selector) {
     },
     scrollableBackgroud: false
   };
+
   // Get Default Properties
+  var properties = defaultProperties;
   var $body = $('body');
   var overlay = '<div class="modal-overlay"></div>';
   var $overlay = {};
@@ -132,6 +136,22 @@ var SimpleModal = function(selector) {
     $('*[data-role="modal:container"] [data-dismiss="modal"]')
     .click(function(event) {
       event.preventDefault();
+      if (properties.hasOwnProperty('userCancel') &&
+          properties.userCancel !== undefined) {
+        properties.userCancel();
+      }
+      startClose();
+    });
+
+    // handle submit modal button
+    void 0;
+    $('*[data-role="modal:container"] [data-submit="modal"]')
+    .click(function(event) {
+      event.preventDefault();
+      if (properties.hasOwnProperty('userSubmit') &&
+          properties.userSubmit !== undefined) {
+        properties.userSubmit();
+      }
       startClose();
     });
 
@@ -203,6 +223,8 @@ var SimpleModal = function(selector) {
     }
 
     isClosing = false;
+
+    // Reset Properties
     void 0;
   }
 

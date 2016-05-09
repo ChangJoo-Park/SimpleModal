@@ -5,7 +5,7 @@
  * @param {selector} - selected Button
  * @return {Object} - sets of functions
  */
-var MyModal = function(selector) {
+var MyModal = function MyModal(selector) {
   var properties = {
     userBeforeOpen: undefined,
     userAfterOpen: undefined,
@@ -37,7 +37,7 @@ var MyModal = function(selector) {
    * @param {[type]} args  source properties
    * @param {[type]} props target properties
    */
-  function setProperties(args, props) {
+  setProperties = function(args, props) {
     var property = props;
     if (property === undefined || property === null) {
       property = properties;
@@ -57,24 +57,26 @@ var MyModal = function(selector) {
    * @param  {*}  args - arguments for properties
    * @return {undefined}
    */
-  function validateProperties(args) {
+  validateProperties = function(args) {
+    console.log("[private] : ", arguments.callee.name, "begin");
     if (args === undefined || args === null || Object.keys(args).length === 0) {
       console.log('Has no args');
       return;
     }
     setProperties(args);
+    console.log("[private] : ", arguments.callee.name, "end");
   }
 
   /**
-   *
+   * Modal start open
+   * @return {[type]} early return when isOpening state
    */
-  function startOpen() {
+  startOpen = function(){
+    console.log("[#startOpen] : Begin");
     if (isOpening) {
       return;
     }
     isOpening = true;
-    console.log('Super -- Before Open !!');
-
     // save body properties
     restorableProperties = {
       overflow: $body.css('overflow')
@@ -82,20 +84,16 @@ var MyModal = function(selector) {
 
     // handle background scroll
     if (properties.scrollableBackgroud) {
+      console.log("[#startOpen] : Not modified body css");
     } else {
+      console.log("[#startOpen] : Add style's to body");
       var styles = {overflow: 'hidden'};
       $body.css(styles);
     }
 
-    // User
-    if (properties.hasOwnProperty('userBeforeOpen') &&
-        properties.userBeforeOpen !== undefined) {
-      console.log('+User --- Before Open !!');
-      properties.userBeforeOpen();
-    }
-
     // handle overlay
     if (properties.useBackdropOvelay === true) {
+      console.log("[#startOpen] : Add Backdrop Overlay");
       if ($('body').find('.modal-overlay').length === 0) {
         $body.append(overlay);
         $overlay = $('.modal-overlay');
@@ -106,21 +104,31 @@ var MyModal = function(selector) {
                           });
       }
     } else {
-      console.log('Not set overlay');
       doOpen();
     }
+
+    // User
+    if (properties.hasOwnProperty('userBeforeOpen') &&
+        properties.userBeforeOpen !== undefined) {
+      console.log("[#startOpen] : Start caller's before open method");
+      properties.userBeforeOpen();
+      console.log("[#startOpen] : End caller's after open method");
+    }
+    console.log("[#startOpen] : End");
   }
 
   /**
    *
    */
-  function endOpen() {
-    console.log('Super -- After Open !!');
+  endOpen = function() {
+    console.log("[#endOpen] : Begin");
     if (properties.useBackdropOvelay === true) {
+      console.log("[#endOpen] : Add click event to overlay");
       $($overlay).click(clickOverlay);
     }
 
     // handle close modal button
+    console.log("[#endOpen] : Add click event to data-dismiss modal");
     $('*[data-role="modal:container"] [data-dismiss="modal"]')
     .click(function(event) {
       event.preventDefault();
@@ -129,121 +137,129 @@ var MyModal = function(selector) {
 
     if (properties.hasOwnProperty('userAfterOpen') &&
         properties.userAfterOpen !== undefined) {
-      console.log('+User --- After Open !!');
+      console.log("[#endOpen] : Before user's afterOpen");
       properties.userAfterOpen();
+      console.log("[#endOpen] : After user's afterOpen");
     }
 
     isOpening = false;
+    console.log("[#endOpen] : End");
   }
 
   /**
    *
    */
-  function startClose() {
+  startClose = function() {
+    console.log("[#startClose] : Begin");
     if (isClosing) {
-      console.log('Start Close Block');
+      console.log("[#startClose] : Block when click multiple");
       return;
     }
     isClosing = true;
 
     if (properties.useBackdropOvelay === true) {
+      console.log("[#startClose] : Remove event from overlay");
       $($overlay).off();
     }
 
     // handle close modal button
+    console.log("[#startClose] : Remove event from close button");
     $('*[data-role="modal:container"] [data-dismiss="modal"]').off();
 
-    console.log('Super -- Before Close !!');
     if (properties.hasOwnProperty('userBeforeClose') &&
         properties.userBeforeClose !== undefined) {
-      console.log('+User --- Before Close !!');
+      console.log("[#startClose] : Before user's beforeClose");
       properties.userBeforeClose();
+      console.log("[#startClose] : After user's beforeClose");
     }
     doClose();
+    console.log("[#startClose] : End");
     return;
   }
 
   /**
-   *
+   * Callback when modal ends
+   * @return {[type]}
    */
-  function endClose() {
-    console.log('Super -- After Close !!');
+  endClose = function () {
+    console.log("[#endClose] : Begin");
 
     if (properties.useBackdropOvelay === true) {
-      console.log('opacity');
+      console.log("[#endClose] : Remove backdrop overlay");
       $overlay.animate({
         opacity: 0
       }, properties.overlayOptions.duration, function() {
         this.remove();
-        $body.css(restorableProperties);
       });
-    } else {
-      $body.css(restorableProperties);
     }
+    console.log("[#endClose] : Restore body styles");
+    $body.css(restorableProperties);
 
     if (properties.hasOwnProperty('userAfterClose') &&
         properties.userAfterClose !== undefined) {
-      console.log('+User --- After Close !!');
+      console.log("[#endClose] : Before call user's afterClose");
       properties.userAfterClose();
+      console.log("[#endClose] : End call user's afterClose");
     }
 
     isClosing = false;
+    console.log("[#endClose] : End");
   }
 
   /**
    *
    */
-  function doOpen() {
-    $modal.animate({
-      opacity: 1,
-      transform: 'scale(0) rotate(720deg)'
-    },
-      300, function() {
-        endOpen();
-      });
+  doOpen = function () {
+    console.log("[#doOpen] : Begin");
+    $modal.show('400', function() {
+      endOpen();
+    });
+    console.log("[#doOpen] : End");
   }
 
   /**
    *
    */
-  function doClose() {
-    console.log('Close !!');
-    $modal.animate({
-      opacity: 0},
-      300, function() {
-        endClose();
-      });
+  doClose = function () {
+    console.log("[#doClose] : Begin");
+    $modal.hide('400', function() {
+      endClose();
+    });
+    console.log("[#doClose] : End");
   }
 
   /**
    * Event when overlay clicked
    * @param  {[type]} event overlay click function
    */
-  function clickOverlay(event) {
+  clickOverlay = function(event) {
     event.preventDefault();
     if (properties.overlayOptions.closeWhenClick) {
       close();
     }
   }
 
+  /**
+   *
+   */
+  close = function () {
+    console.log("[#open] Begin");
+    startClose();
+    console.log("[#open] End");
+  }
+
   // Public Methods
   /**
    * @param  {*} args - It is initialize parames, will set properties
    */
-  function open(args) {
+  open = function (args) {
+    console.log("[#Open] Begin");
     validateProperties(args);
     startOpen();
-  }
-
-  /**
-   *
-   */
-  function close() {
-    startClose();
+    console.log("[#Open] End");
   }
 
   return {
-    open: open,
-    close: close
+    open: open
   };
 };

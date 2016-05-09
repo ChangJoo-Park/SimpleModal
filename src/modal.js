@@ -6,6 +6,32 @@
  * @return {Object} - sets of functions
  */
 var SimpleModal = function(selector) {
+  if(selector === undefined || selector === null) {
+    console.error("Please Open right way. See the documnt");
+    return;
+  }
+
+  // Out focus from button
+  $(selector).blur();
+
+  var $body = $('body');
+  var overlay = '<div class="modal-overlay"></div>';
+  var $overlay = {};
+  var selectorData = $(selector).data();
+  var $modal = $(selectorData['target']);
+
+  // Check Available
+  console.log("Selector Data : ", selectorData.hasOwnProperty('target'), selectorData.hasOwnProperty('role'));
+  if(!selectorData.hasOwnProperty('target') && selectorData.hasOwnProperty('role')) {
+    return;
+  }
+  if($modal === undefined ||
+   $modal.data('role') !== 'modal:container') {
+    alert('Error');
+    return;
+  }
+
+  console.log("Open");
   var defaultProperties = {
     userBeforeOpen: undefined,
     userAfterOpen: undefined,
@@ -18,17 +44,14 @@ var SimpleModal = function(selector) {
       opacity: 0.95,
       duration: 300,
       color: 'black',
-      closeWhenClick: false
+      closeWhenClick: true
     },
     scrollableBackgroud: false
   };
 
   // Get Default Properties
   var properties = defaultProperties;
-  var $body = $('body');
-  var overlay = '<div class="modal-overlay"></div>';
-  var $overlay = {};
-  var $modal = $($(selector).data('target'));
+
   // Save before body properties
   var restorableProperties = {
     overflow: $body.css('overflow')
@@ -62,13 +85,12 @@ var SimpleModal = function(selector) {
    * @return {undefined}
    */
   validateProperties = function(args) {
-    console.log("[private] : ", arguments.callee.name, "begin");
     if (args === undefined || args === null || Object.keys(args).length === 0) {
       console.log('Has no args');
       return;
     }
     setProperties(args);
-    console.log("[private] : ", arguments.callee.name, "end");
+    console.debug(properties);
   }
 
   /**
@@ -133,7 +155,7 @@ var SimpleModal = function(selector) {
 
     // handle close modal button
     console.log("[#endOpen] : Add click event to data-dismiss modal");
-    $('*[data-role="modal:container"] [data-dismiss="modal"]')
+    $('*[data-role="modal:container"] [data-role="modal:close"]')
     .click(function(event) {
       event.preventDefault();
       if (properties.hasOwnProperty('userCancel') &&
@@ -145,7 +167,7 @@ var SimpleModal = function(selector) {
 
     // handle submit modal button
     console.log("[#endOpen] : Add click event to data-submit modal");
-    $('*[data-role="modal:container"] [data-submit="modal"]')
+    $('*[data-role="modal:container"] [data-role="modal:submit"]')
     .click(function(event) {
       event.preventDefault();
       if (properties.hasOwnProperty('userSubmit') &&
@@ -225,6 +247,7 @@ var SimpleModal = function(selector) {
     isClosing = false;
 
     // Reset Properties
+    properties = {};
     console.log("[#endClose] : End");
   }
 

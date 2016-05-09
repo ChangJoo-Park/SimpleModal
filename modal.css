@@ -9,7 +9,7 @@
 }
 
 .modal-container {
-  opacity: 0;
+  display:none;
   position: fixed;
 -webkit-transform: translate(-50%, -50%);
    -moz-transform: translate(-50%, -50%);

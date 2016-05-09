@@ -3,3 +3,4 @@ bower_components
 app.js
 index.html
 jquery.js
+gulpfile.js

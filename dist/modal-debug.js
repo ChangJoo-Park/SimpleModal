@@ -5,7 +5,7 @@
  * @param {selector} - selected Button
  * @return {Object} - sets of functions
  */
-var MyModal = function MyModal(selector) {
+var SimpleModal = function(selector) {
   var properties = {
     userBeforeOpen: undefined,
     userAfterOpen: undefined,
@@ -58,13 +58,13 @@ var MyModal = function MyModal(selector) {
    * @return {undefined}
    */
   validateProperties = function(args) {
-    console.log("[private] : ", arguments.callee.name, "begin");
+    void 0;
     if (args === undefined || args === null || Object.keys(args).length === 0) {
-      console.log('Has no args');
+      void 0;
       return;
     }
     setProperties(args);
-    console.log("[private] : ", arguments.callee.name, "end");
+    void 0;
   }
 
   /**
@@ -72,7 +72,7 @@ var MyModal = function MyModal(selector) {
    * @return {[type]} early return when isOpening state
    */
   startOpen = function(){
-    console.log("[#startOpen] : Begin");
+    void 0;
     if (isOpening) {
       return;
     }
@@ -84,16 +84,16 @@ var MyModal = function MyModal(selector) {
 
     // handle background scroll
     if (properties.scrollableBackgroud) {
-      console.log("[#startOpen] : Not modified body css");
+      void 0;
     } else {
-      console.log("[#startOpen] : Add style's to body");
+      void 0;
       var styles = {overflow: 'hidden'};
       $body.css(styles);
     }
 
     // handle overlay
     if (properties.useBackdropOvelay === true) {
-      console.log("[#startOpen] : Add Backdrop Overlay");
+      void 0;
       if ($('body').find('.modal-overlay').length === 0) {
         $body.append(overlay);
         $overlay = $('.modal-overlay');
@@ -110,25 +110,25 @@ var MyModal = function MyModal(selector) {
     // User
     if (properties.hasOwnProperty('userBeforeOpen') &&
         properties.userBeforeOpen !== undefined) {
-      console.log("[#startOpen] : Start caller's before open method");
+      void 0;
       properties.userBeforeOpen();
-      console.log("[#startOpen] : End caller's after open method");
+      void 0;
     }
-    console.log("[#startOpen] : End");
+    void 0;
   }
 
   /**
    *
    */
   endOpen = function() {
-    console.log("[#endOpen] : Begin");
+    void 0;
     if (properties.useBackdropOvelay === true) {
-      console.log("[#endOpen] : Add click event to overlay");
+      void 0;
       $($overlay).click(clickOverlay);
     }
 
     // handle close modal button
-    console.log("[#endOpen] : Add click event to data-dismiss modal");
+    void 0;
     $('*[data-role="modal:container"] [data-dismiss="modal"]')
     .click(function(event) {
       event.preventDefault();
@@ -137,43 +137,43 @@ var MyModal = function MyModal(selector) {
 
     if (properties.hasOwnProperty('userAfterOpen') &&
         properties.userAfterOpen !== undefined) {
-      console.log("[#endOpen] : Before user's afterOpen");
+      void 0;
       properties.userAfterOpen();
-      console.log("[#endOpen] : After user's afterOpen");
+      void 0;
     }
 
     isOpening = false;
-    console.log("[#endOpen] : End");
+    void 0;
   }
 
   /**
    *
    */
   startClose = function() {
-    console.log("[#startClose] : Begin");
+    void 0;
     if (isClosing) {
-      console.log("[#startClose] : Block when click multiple");
+      void 0;
       return;
     }
     isClosing = true;
 
     if (properties.useBackdropOvelay === true) {
-      console.log("[#startClose] : Remove event from overlay");
+      void 0;
       $($overlay).off();
     }
 
     // handle close modal button
-    console.log("[#startClose] : Remove event from close button");
+    void 0;
     $('*[data-role="modal:container"] [data-dismiss="modal"]').off();
 
     if (properties.hasOwnProperty('userBeforeClose') &&
         properties.userBeforeClose !== undefined) {
-      console.log("[#startClose] : Before user's beforeClose");
+      void 0;
       properties.userBeforeClose();
-      console.log("[#startClose] : After user's beforeClose");
+      void 0;
     }
     doClose();
-    console.log("[#startClose] : End");
+    void 0;
     return;
   }
 
@@ -182,50 +182,50 @@ var MyModal = function MyModal(selector) {
    * @return {[type]}
    */
   endClose = function () {
-    console.log("[#endClose] : Begin");
+    void 0;
 
     if (properties.useBackdropOvelay === true) {
-      console.log("[#endClose] : Remove backdrop overlay");
+      void 0;
       $overlay.animate({
         opacity: 0
       }, properties.overlayOptions.duration, function() {
         this.remove();
       });
     }
-    console.log("[#endClose] : Restore body styles");
+    void 0;
     $body.css(restorableProperties);
 
     if (properties.hasOwnProperty('userAfterClose') &&
         properties.userAfterClose !== undefined) {
-      console.log("[#endClose] : Before call user's afterClose");
+      void 0;
       properties.userAfterClose();
-      console.log("[#endClose] : End call user's afterClose");
+      void 0;
     }
 
     isClosing = false;
-    console.log("[#endClose] : End");
+    void 0;
   }
 
   /**
    *
    */
   doOpen = function () {
-    console.log("[#doOpen] : Begin");
+    void 0;
     $modal.show('400', function() {
       endOpen();
     });
-    console.log("[#doOpen] : End");
+    void 0;
   }
 
   /**
    *
    */
   doClose = function () {
-    console.log("[#doClose] : Begin");
+    void 0;
     $modal.hide('400', function() {
       endClose();
     });
-    console.log("[#doClose] : End");
+    void 0;
   }
 
   /**
@@ -243,9 +243,9 @@ var MyModal = function MyModal(selector) {
    *
    */
   close = function () {
-    console.log("[#open] Begin");
+    void 0;
     startClose();
-    console.log("[#open] End");
+    void 0;
   }
 
   // Public Methods
@@ -253,10 +253,10 @@ var MyModal = function MyModal(selector) {
    * @param  {*} args - It is initialize parames, will set properties
    */
   open = function (args) {
-    console.log("[#Open] Begin");
+    void 0;
     validateProperties(args);
     startOpen();
-    console.log("[#Open] End");
+    void 0;
   }
 
   return {

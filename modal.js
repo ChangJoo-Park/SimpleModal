@@ -1,6 +1,8 @@
 /* global $:true */
+
 /**
  * My Modal Library
+ * @param {selector} - selected Button
  * @return {Object} - sets of functions
  */
 var MyModal = function(selector) {
@@ -14,7 +16,7 @@ var MyModal = function(selector) {
       opacity: 0.95,
       duration: 300,
       color: 'black',
-      closeWhenClick: true
+      closeWhenClick: false
     },
     scrollableBackgroud: false
   };
@@ -27,18 +29,24 @@ var MyModal = function(selector) {
   var restorableProperties = {
     overflow: $body.css('overflow')
   };
-  console.log('restorableProperties', restorableProperties);
+  var isOpening = false;
+  var isClosing = false;
 
+  /**
+   * set properties from arguments
+   * @param {[type]} args  source properties
+   * @param {[type]} props target properties
+   */
   function setProperties(args, props) {
     var property = props;
     if (property === undefined || property === null) {
       property = properties;
     }
-    Object.keys(args).forEach(function(key, idx){
-      if(!property.hasOwnProperty(key)) {
+    Object.keys(args).forEach(function(key) {
+      if (!property.hasOwnProperty(key)) {
         return;
       }
-      if(typeof args[key] ===  'object') {
+      if (typeof args[key] === 'object') {
         setProperties(args[key], property[key]);
       } else {
         property[key] = args[key];
@@ -50,7 +58,7 @@ var MyModal = function(selector) {
    * @return {undefined}
    */
   function validateProperties(args) {
-    if (args === undefined || args == null || Object.keys(args).length === 0) {
+    if (args === undefined || args === null || Object.keys(args).length === 0) {
       console.log('Has no args');
       return;
     }
@@ -61,7 +69,12 @@ var MyModal = function(selector) {
    *
    */
   function startOpen() {
+    if (isOpening) {
+      return;
+    }
+    isOpening = true;
     console.log('Super -- Before Open !!');
+
     // save body properties
     restorableProperties = {
       overflow: $body.css('overflow')
@@ -83,14 +96,14 @@ var MyModal = function(selector) {
 
     // handle overlay
     if (properties.useBackdropOvelay === true) {
-      if($('body').find('.modal-overlay').length === 0) {
+      if ($('body').find('.modal-overlay').length === 0) {
         $body.append(overlay);
         $overlay = $('.modal-overlay');
         $overlay.css('background-color', properties.overlayOptions.color);
-        $overlay.animate({'opacity': properties.overlayOptions.opacity},
-                          properties.overlayOptions.duration, function(){
+        $overlay.animate({opacity: properties.overlayOptions.opacity},
+                          properties.overlayOptions.duration, function() {
                             doOpen();
-        });
+                          });
       }
     } else {
       console.log('Not set overlay');
@@ -104,11 +117,12 @@ var MyModal = function(selector) {
   function endOpen() {
     console.log('Super -- After Open !!');
     if (properties.useBackdropOvelay === true) {
-       $($overlay).click(clickOverlay);
+      $($overlay).click(clickOverlay);
     }
 
     // handle close modal button
-    $('*[data-role="modal:container"] [data-dismiss="modal"]').click(function(event) {
+    $('*[data-role="modal:container"] [data-dismiss="modal"]')
+    .click(function(event) {
       event.preventDefault();
       startClose();
     });
@@ -118,12 +132,27 @@ var MyModal = function(selector) {
       console.log('+User --- After Open !!');
       properties.userAfterOpen();
     }
+
+    isOpening = false;
   }
 
   /**
    *
    */
   function startClose() {
+    if (isClosing) {
+      console.log('Start Close Block');
+      return;
+    }
+    isClosing = true;
+
+    if (properties.useBackdropOvelay === true) {
+      $($overlay).off();
+    }
+
+    // handle close modal button
+    $('*[data-role="modal:container"] [data-dismiss="modal"]').off();
+
     console.log('Super -- Before Close !!');
     if (properties.hasOwnProperty('userBeforeClose') &&
         properties.userBeforeClose !== undefined) {
@@ -142,7 +171,9 @@ var MyModal = function(selector) {
 
     if (properties.useBackdropOvelay === true) {
       console.log('opacity');
-      $overlay.animate({opacity: 0}, properties.overlayOptions.duration, function() {
+      $overlay.animate({
+        opacity: 0
+      }, properties.overlayOptions.duration, function() {
         this.remove();
         $body.css(restorableProperties);
       });
@@ -155,15 +186,21 @@ var MyModal = function(selector) {
       console.log('+User --- After Close !!');
       properties.userAfterClose();
     }
+
+    isClosing = false;
   }
 
   /**
    *
    */
   function doOpen() {
-    $modal.show(function(){
-      endOpen();
-    });
+    $modal.animate({
+      opacity: 1,
+      transform: 'scale(0) rotate(720deg)'
+    },
+      300, function() {
+        endOpen();
+      });
   }
 
   /**
@@ -171,20 +208,21 @@ var MyModal = function(selector) {
    */
   function doClose() {
     console.log('Close !!');
-    console.log($modal);
-    $modal.hide(function(){
-      endClose();
-    });
+    $modal.animate({
+      opacity: 0},
+      300, function() {
+        endClose();
+      });
   }
 
-  /*
-    Overlay functions
+  /**
+   * Event when overlay clicked
+   * @param  {[type]} event overlay click function
    */
   function clickOverlay(event) {
+    event.preventDefault();
     if (properties.overlayOptions.closeWhenClick) {
       close();
-    } else {
-
     }
   }
 
@@ -195,7 +233,6 @@ var MyModal = function(selector) {
   function open(args) {
     validateProperties(args);
     startOpen();
-    // afterOpen();
   }
 
   /**
@@ -210,11 +247,3 @@ var MyModal = function(selector) {
     close: close
   };
 };
-
-// Hide all modal container
-(function(){
-  $('div[data-role="modal:container"]').each(function(index, el) {
-    $(el).hide();
-  });
-}());
-

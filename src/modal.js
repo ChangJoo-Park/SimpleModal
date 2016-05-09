@@ -280,17 +280,8 @@ var SimpleModal = function(selector) {
   clickOverlay = function(event) {
     event.preventDefault();
     if (properties.overlayOptions.closeWhenClick) {
-      close();
+      startClose();
     }
-  };
-
-  /**
-   *
-   */
-  close = function() {
-    console.log('[#open] Begin');
-    startClose();
-    console.log('[#open] End');
   };
 
   // Public Methods
